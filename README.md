@@ -16,7 +16,7 @@ public class Customer {
 }
 ```
 
-it generates constructor, getters, equals, hashCode, toString, builder and copy method. Essentially an equivalent of the Kotlin `data class` (immutable) definition. No plugin/annotation processor are required on compile time, it is just an IDE shortcut that generates the code for you.
+it generates constructor, getters, equals, hashCode, toString, builder and copy method. Essentially an equivalent of the Kotlin `data class` (immutable) definition. No plugin/annotation processor are required at compile time, it is just an IDE shortcut that generates the code for you.
 
 ---
 
@@ -43,7 +43,7 @@ If the return type of the `when()` expression is implicit and uses sub-typing (e
 Just use POJO-like classes, using the code generation tool provided here. Define all fields as `private` and `final`; even if debated, use `Optional<T>` (or `Option<T>` from [vavr](https://www.vavr.io/vavr-docs/#_option)) in order to describe fields that can have no value. Never use `null` values.
 
 #### Coproduct (sum) type:
-Define an abstract class with a private consturctor, then you can define all the possible "constructors" you need by defining some static inner classes that extend the abstract class. In this way, only inner classes defined inside the abstract class body can extend it, modelling something that can be compared to a Kotlin sealed class. Example:
+Define an abstract class with a private constructor, then you can define all the possible "constructors" you need by defining some static inner classes that extend the abstract class. In this way, only inner classes defined inside the abstract class body can extend it, modelling something that can be compared to a Kotlin sealed class. Example:
 
 ```java
 public abstract class Shipment {
@@ -68,4 +68,13 @@ public abstract class Shipment {
 ---
 
 ### Railway oriented programming and other functional programming stuff 
-You can use the Either from [vavr](https://www.vavr.io/vavr-docs/#_either). [Vavr](https://www.vavr.io/) also provide some more tools that can be useful for functional programming in Java, so I suggest to look at it before implementing something from scratch. The `When.java` code is proposed here instead of the vavr pattern matching feature just because it is simpler and more readable. If you need something more advanced, you can use the Vavr pattern matching.
+You can use the Result class provided here. Either from 
+[vavr](https://www.vavr.io/vavr-docs/#_either) is also an alternative. 
+[Vavr](https://www.vavr.io/) also provide some more tools that can be useful
+for functional programming in Java, so I suggest to look at it before implementing
+something from scratch. The `When.java` code is proposed here instead of the vavr
+pattern matching feature just because it is simpler and more readable. If you need
+something more advanced, you can use the Vavr pattern matching.
+
+For most use cases, the `Result` and the `When` classes in this repository are what
+ you need in order to structure your domain code. 
