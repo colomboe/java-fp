@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<codeTemplateList>
+    <templates>
+        <templates version="1.3">
+            <id>980cf35e-24ac-40a1-90e9-05e0ce8e9002</id>
+            <name>Data class</name>
+            <fileNamePattern>.*\.java$</fileNamePattern>
+            <type>body</type>
+            <enabled>true</enabled>
+            <template>public ${class0.name}( ##
+#foreach($field in $class0.allFields )
+#if ($velocityCount&gt;1),
+#end
+$field.type $field.name ##
+#end) {
+#foreach($field in $class0.allFields )
+this.$field.name = $field.name;
+#end
+}
+
+private ${class0.name}(Builder builder) {
+#foreach($field in $class0.allFields )
+this.$field.name = builder.$field.name;
+#end
+}
+
+#foreach($field in $class0.allFields)
+#set($name = $StringUtil.capitalizeWithJavaBeanConvention($StringUtil.sanitizeJavaIdentifier($helper.getPropertyName($field.element, $project))))
+#if ($field.boolean &amp;&amp; $field.primitive)
+#set($getter = "is${name}")
+#else
+#set($getter = "get${name}")
+#end
+#set($setter = "set${name}")
+#if($field.modifierStatic)
+static ##
+#end
+public $field.type ##
+${getter}() {
+return $field.name;
+}
+#end
+
+@Override
+public boolean equals(Object o){
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    #set($instanceName = $StringUtil.decapitalize($class0.name))
+    $class0.name $instanceName = ($class0.name) o;
+  return ##
+    #foreach( $field in $class0.allFields )
+        #if ($velocityCount&gt;1)
+        
+        &amp;&amp; #end ##
+        #if ($field.double)
+        Double.compare($instanceName.$field.name, $field.name) == 0 ##
+        #elseif ($field.float)
+        Float.compare($instanceName.$field.name, $field.name) == 0 ##
+        #elseif ($field.primitive)
+        $field.name != $instanceName.$field.name ##
+        #elseif ($field.enum)
+        $field.name != $instanceName.$field.name ##
+        #elseif ($field.array)
+        java.util.Arrays.equals($field.name, $instanceName.$field.name) ##
+        #else
+        java.util.Objects.equals($field.name, $instanceName.$field.name) ##
+        #end
+    #end
+  ;
+}
+
+@Override
+public int hashCode() {
+    return Objects.hash( ##
+    #foreach( $member in $class0.allFields )
+    #if ($velocityCount&gt;1),#end ##
+    $member.name ##
+    #end
+    );
+}
+
+@Override
+public java.lang.String toString() {
+#if ( $class0.allFields.size() &gt; 0 )
+#set ( $i = 0 )
+    return "$class0.name{" +
+#foreach( $member in $class0.allFields )
+#if ( $i == 0 )
+    "##
+#else
+    ", ##
+#end
+#if ( $member.objectArray )
+#if ($java_version &lt; 5)
+$member.name=" + ($member.accessor == null ? null : java.util.Arrays.asList($member.accessor)) +
+#else
+$member.name=" + java.util.Arrays.toString($member.accessor) +
+#end
+#elseif ( $member.primitiveArray &amp;&amp; $java_version &gt;= 5)
+$member.name=" + java.util.Arrays.toString($member.accessor) +
+#elseif ( $member.string )
+$member.name='" + $member.accessor + '\'' +
+#else
+$member.name=" + $member.accessor +
+#end
+#set ( $i = $i + 1 )
+#end
+    '}';
+#else
+    return "$class0.name{}";
+#end
+}
+
+public Builder copy() {
+    return builder() ##
+#foreach($field in $class0.allFields )
+#set($name = $StringUtil.capitalizeWithJavaBeanConvention($StringUtil.sanitizeJavaIdentifier($helper.getPropertyName($field.element, $project))))
+
+.with$name($field.name) ##
+#end
+;
+}
+
+public static Builder builder() {
+    return new Builder();
+}
+
+public static class Builder {
+
+#foreach($field in $class0.allFields )
+private $field.type $field.name;
+#end
+
+#foreach($field in $class0.allFields )
+#set($name = $StringUtil.capitalizeWithJavaBeanConvention($StringUtil.sanitizeJavaIdentifier($helper.getPropertyName($field.element, $project))))
+#set($paramName = $helper.getParamName($field.element, $project))
+public Builder with$name($field.type $paramName) {
+    this.$field.name = $paramName;
+    return this; 
+}
+#end
+
+public $class0.name build() {
+    return new ${class0.name}(this);
+}
+
+}</template>
+            <fileEncoding>UTF-8</fileEncoding>
+            <pipeline/>
+            <insertNewMethodOption>AT_CARET</insertNewMethodOption>
+            <whenDuplicatesOption>ASK</whenDuplicatesOption>
+            <jumpToMethod>true</jumpToMethod>
+            <classNameVm>$class0.name</classNameVm>
+            <alwaysPromptForPackage>false</alwaysPromptForPackage>
+        </templates>
+    </templates>
+</codeTemplateList>
